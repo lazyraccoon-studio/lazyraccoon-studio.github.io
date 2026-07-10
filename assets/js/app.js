@@ -10,7 +10,7 @@
   var state = {
     lang: localStorage.getItem('lrs_lang') || 'ko',
     theme: localStorage.getItem('lrs_theme') || 'light',
-    font: localStorage.getItem('lrs_font') || 'mono'
+    font: sessionStorage.getItem('lrs_font') || 'mono' /* terminal font on every new session; sticks across reloads within the same tab */
   };
 
   var FONTS = [
@@ -336,7 +336,7 @@
     else if (a === 'project') { go('#/work/' + el.getAttribute('data-slug')); window.scrollTo(0, 0); }
     else if (a === 'lang') { state.lang = el.getAttribute('data-lang'); localStorage.setItem('lrs_lang', state.lang); document.documentElement.setAttribute('data-lang', state.lang); render(); }
     else if (a === 'theme') { state.theme = state.theme === 'dark' ? 'light' : 'dark'; localStorage.setItem('lrs_theme', state.theme); document.documentElement.setAttribute('data-theme', state.theme); render(); }
-    else if (a === 'font') { var i = FONTS.map(function (x) { return x.id; }).indexOf(state.font); state.font = FONTS[(i + 1) % FONTS.length].id; localStorage.setItem('lrs_font', state.font); document.documentElement.setAttribute('data-font', state.font); render(); }
+    else if (a === 'font') { var i = FONTS.map(function (x) { return x.id; }).indexOf(state.font); state.font = FONTS[(i + 1) % FONTS.length].id; sessionStorage.setItem('lrs_font', state.font); document.documentElement.setAttribute('data-font', state.font); render(); }
   });
 
   window.addEventListener('hashchange', render);
