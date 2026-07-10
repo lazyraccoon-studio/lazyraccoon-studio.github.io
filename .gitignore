@@ -1,0 +1,3 @@
+# Claude Code / gstack local state (sessions, tokens, logs, QA artifacts)
+.claude/
+.gstack/

@@ -1,0 +1,58 @@
+{
+  "projects": [
+    {
+      "slug": "moonlit-keep",
+      "tag": "game",
+      "year": "2026",
+      "name": "Moonlit Keep",
+      "type": {
+        "ko": "게임",
+        "en": "Game"
+      },
+      "status": {
+        "ko": "개발 중",
+        "en": "In dev"
+      },
+      "blurb": {
+        "ko": "달빛이 비추는 성을 지키는 협동 타워 디펜스 게임.",
+        "en": "A co-op tower-defense game guarding a moonlit keep."
+      }
+    },
+    {
+      "slug": "trashpanda-cli",
+      "tag": "app",
+      "year": "2025",
+      "name": "Trashpanda CLI",
+      "type": {
+        "ko": "앱·서비스",
+        "en": "App"
+      },
+      "status": {
+        "ko": "운영 중",
+        "en": "Live"
+      },
+      "blurb": {
+        "ko": "개발자를 위한 배포 자동화 CLI 툴킷.",
+        "en": "A deploy-automation CLI toolkit for developers."
+      }
+    },
+    {
+      "slug": "nightshift",
+      "tag": "contract",
+      "year": "2025",
+      "name": "Nightshift",
+      "type": {
+        "ko": "외주",
+        "en": "Contract"
+      },
+      "status": {
+        "ko": "완료",
+        "en": "Shipped"
+      },
+      "blurb": {
+        "ko": "스타트업의 실시간 대시보드를 8주 만에 구축.",
+        "en": "Built a startup's realtime dashboard in 8 weeks."
+      }
+    }
+  ]
+}
