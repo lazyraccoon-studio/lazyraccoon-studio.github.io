@@ -15,17 +15,13 @@ excerpt: 정적 사이트로 회사 홈페이지를 만들고 마크다운으로
 
 무료로 호스팅되고, `git push` 한 번으로 배포됩니다. 작은 스튜디오에 딱 맞습니다.
 
-```yaml
-# .github/workflows/deploy.yml
-name: Deploy
-on:
-  push: { branches: [main] }
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/deploy-pages@v4
+빌드 과정이 없는 순수 정적 사이트라 GitHub Actions도 필요 없습니다. 저장소 루트에 `.nojekyll` 파일만 두고, **Settings → Pages → Source: Deploy from a branch** 에서 `main` / `/ (root)` 만 선택하면 끝입니다.
+
+```
+저장소 루트
+├─ .nojekyll        ← Jekyll 처리를 건너뛰게 하는 빈 파일
+├─ index.html
+└─ ...
 ```
 
 ## 마크다운으로 글쓰기

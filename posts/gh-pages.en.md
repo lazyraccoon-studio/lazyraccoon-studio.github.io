@@ -12,17 +12,13 @@ While deciding how to build our company site, we chose a serverless static site 
 
 Free hosting, and it deploys with a single `git push`. Perfect for a small studio.
 
-```yaml
-# .github/workflows/deploy.yml
-name: Deploy
-on:
-  push: { branches: [main] }
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/deploy-pages@v4
+No build step for a pure static site, so no GitHub Actions needed either. Just drop a `.nojekyll` file in the repo root and pick **Settings → Pages → Source: Deploy from a branch** → `main` / `/ (root)`.
+
+```
+repo root
+├─ .nojekyll        ← empty file, skips Jekyll processing
+├─ index.html
+└─ ...
 ```
 
 ## Writing in Markdown

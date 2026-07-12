@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 · Lazy Raccoon Studio</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0d0f13">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Nanum+Gothic+Coding:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/quiple/galmuri/dist/galmuri.css">
+  <style>
+    :root { --bg:#0d0f13; --bg2:#111419; --ink:#e9ebe8; --ink-soft:#c2c7c0; --muted:#8b9088; --accent:#7CF29C; --accent-ink:#0a0d0a; --border2:#20242a; --path:#8AB4FF; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { min-height:100vh; background:var(--bg); color:var(--ink); font-family:'GalmuriMono11','Galmuri11','JetBrains Mono','Nanum Gothic Coding',monospace; display:flex; align-items:center; justify-content:center; padding:24px; -webkit-font-smoothing:antialiased; }
+    .wrap { width:100%; max-width:620px; }
+    .terminal { border:1px solid var(--border2); border-radius:12px; overflow:hidden; background:var(--bg2); box-shadow:0 30px 90px rgba(0,0,0,.5); }
+    .term-bar { display:flex; align-items:center; gap:8px; padding:12px 16px; border-bottom:1px solid var(--border2); }
+    .dot { width:11px; height:11px; border-radius:50%; }
+    .term-title { margin-left:10px; font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .term-body { padding:34px 30px; font-size:15px; line-height:2; }
+    .p { color:var(--accent); } .path { color:var(--path); }
+    .code { font-size:66px; font-weight:700; color:var(--ink); line-height:1.05; margin:12px 0 6px; letter-spacing:-1px; }
+    .msg { color:var(--muted); font-size:15px; margin-bottom:22px; }
+    .cursor { display:inline-block; width:9px; height:19px; background:var(--accent); vertical-align:-3px; margin-left:2px; animation:blink 1s step-end infinite; }
+    @keyframes blink { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+    .home { display:inline-block; margin-top:6px; padding:13px 26px; background:var(--accent); color:var(--accent-ink); font-weight:700; font-size:14px; border-radius:8px; text-decoration:none; }
+    .rc { display:block; margin:0 auto 18px; width:78px; height:auto; image-rendering:pixelated; animation:bob 2.6s ease-in-out infinite; }
+    @keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+    @media (max-width:520px){ .code{ font-size:46px; } .term-body{ padding:26px 20px; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <img id="rc" class="rc" alt="Lazy Raccoon" src="assets/img/raccoon-typing.png">
+    <div class="terminal">
+      <div class="term-bar">
+        <span class="dot" style="background:#ff5f56"></span>
+        <span class="dot" style="background:#ffbd2e"></span>
+        <span class="dot" style="background:#27c93f"></span>
+        <span class="term-title">~/lazy-raccoon-studio — zsh</span>
+      </div>
+      <div class="term-body">
+        <div><span class="p">➜</span> <span class="path">~</span> cd <span id="req">그 페이지</span></div>
+        <div class="code">404</div>
+        <div class="msg" id="msg">그런 페이지는 없어요. 너구리도 못 찾았습니다.</div>
+        <div><span class="p">➜</span> <span class="path">~</span> cd ~<span class="cursor"></span></div>
+        <a class="home" id="home" href="/">← 홈으로</a>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      // Resolve the site root for both user pages (user.github.io/) and project pages (user.github.io/repo/)
+      var parts = location.pathname.split('/').filter(Boolean);
+      var base = '/';
+      if (location.hostname.endsWith('github.io') && parts.length > 0) base = '/' + parts[0] + '/';
+      document.getElementById('home').setAttribute('href', base);
+      document.getElementById('rc').src = base + 'assets/img/raccoon-typing.png';
+      // show the requested path
+      var req = location.pathname.replace(base, '') || location.pathname;
+      if (req && req !== '/') document.getElementById('req').textContent = '/' + req.replace(/^\/+/, '');
+      // EN fallback if browser prefers English
+      if ((navigator.language || '').slice(0,2) === 'en') {
+        document.documentElement.lang = 'en';
+        document.getElementById('msg').textContent = "That page doesn't exist. Even the raccoon couldn't find it.";
+        document.getElementById('home').textContent = '← Back home';
+      }
+    })();
+  </script>
+</body>
+</html>

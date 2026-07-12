@@ -10,7 +10,8 @@
   var state = {
     lang: localStorage.getItem('lrs_lang') || 'ko',
     theme: localStorage.getItem('lrs_theme') || 'light',
-    font: sessionStorage.getItem('lrs_font') || 'mono' /* terminal font on every new session; sticks across reloads within the same tab */
+    font: sessionStorage.getItem('lrs_font') || 'pixel',
+    menuOpen: false
   };
 
   var FONTS = [
@@ -53,11 +54,13 @@
 
   function nav(current) {
     return '' +
-      '<div class="nav"><div class="nav-inner">' +
+      '<div class="nav' + (state.menuOpen ? ' open' : '') + '"><div class="nav-inner">' +
         '<div class="brand" data-action="nav" data-page="home">' +
           '<img class="pixel" src="assets/img/logo-raccoon-bust.png" alt="Lazy Raccoon">' +
           '<span>lazy_raccoon<span class="accent">_studio</span></span>' +
         '</div>' +
+        '<button class="nav-burger' + (state.menuOpen ? ' on' : '') + '" data-action="menu" aria-label="menu"><span></span><span></span><span></span></button>' +
+        '<div class="nav-scrim" data-action="menu"></div>' +
         '<div class="nav-links">' +
           navLink('studio', 'nav_studio', current) +
           navLink('services', 'nav_services', current) +
@@ -80,7 +83,7 @@
   function mascotBand(page) {
     return '' +
       '<div class="container"><div class="mascot-band">' +
-        '<div class="mascot-frame"><img class="pixel" src="assets/img/raccoon-desk.png" alt="Lazy Raccoon mascot"></div>' +
+        '<div class="mascot-frame"><img src="assets/img/raccoon-sleep.gif" alt="Lazy Raccoon mascot"></div>' +
         '<div class="mascot-copy">' +
           '<div class="section-label">' + esc(t('foot_label')) + '</div>' +
           '<h2>' + esc(t('foot_cta_h')) + '</h2>' +
@@ -97,8 +100,13 @@
   function footer() {
     return '' +
       '<div class="footer"><div class="footer-inner">' +
-        '<div class="footer-brand"><img class="pixel" src="assets/img/logo-raccoon-bust.png" alt=""><span>' + esc(t('rights')) + '</span></div>' +
-        '<div class="footer-built">' + esc(t('biz_no')) + ' ' + esc(window.CONTACT.bizNo) + ' · ' + esc(t('addr_v')) + '</div>' +
+        '<div class="footer-brand"><span>' + esc(t('rights')) + '</span></div>' +
+        '<div class="footer-built">' +
+          '<div class="foot-mascot" title="typing raccoon">' +
+            '<div class="rc-glyphs"><span>{ }</span><span>&lt;/&gt;</span><span>~$</span></div>' +
+            '<img class="rc pixel" src="assets/img/raccoon-typing.png" alt="Lazy Raccoon coding">' +
+          '</div>' +
+        '</div>' +
       '</div></div>';
   }
 
@@ -307,18 +315,18 @@
           '<div><label>' + esc(t('form_name')) + '</label><input type="text"></div>' +
           '<div><label>' + esc(t('form_email')) + '</label><input type="email"></div>' +
           '<div><label>' + esc(t('form_msg')) + '</label><textarea rows="5"></textarea></div>' +
-          '<button class="btn" type="submit">' + esc(t('form_send')) + '</button>' +
+          '<div class="form-foot">' +
+            '<div class="captcha-col"><label>' + esc(t('form_captcha')) + '</label><div class="captcha-slot" data-captcha>' + esc(t('captcha_hint')) + '</div></div>' +
+            '<button class="btn" type="submit">' + esc(t('form_send')) + '</button>' +
+          '</div>' +
         '</form></div>' +
         '<div class="info-col">' +
-          '<div class="info-card">' +
-            '<div class="info-row"><div class="k">email</div><a class="v" href="mailto:' + esc(window.CONTACT.email) + '">' + esc(window.CONTACT.email) + '</a></div>' +
-            '<div class="info-row"><div class="k">github</div><a class="v" href="https://' + esc(window.CONTACT.github) + '">' + esc(window.CONTACT.github) + '</a></div>' +
-          '</div>' +
           '<div class="info-card biz">' +
             '<div class="section-label" style="margin-bottom:18px">' + esc(t('biz_label')) + '</div>' +
             '<div class="info-row"><div class="k">' + esc(t('biz_company')) + '</div><div class="v">' + esc(t('biz_company_v')) + '</div></div>' +
             '<div class="info-row"><div class="k">' + esc(t('biz_no')) + '</div><div class="v">' + esc(window.CONTACT.bizNo) + '</div></div>' +
             '<div class="info-row"><div class="k">' + esc(t('biz_addr')) + '</div><div class="v">' + esc(t('addr_v')) + '</div></div>' +
+            '<div class="biz-art"><img class="pixel" src="assets/img/raccoon-sleep.png" alt=""></div>' +
           '</div>' +
         '</div>' +
       '</div>' +
@@ -330,8 +338,9 @@
     var el = e.target.closest('[data-action]');
     if (!el) return;
     var a = el.getAttribute('data-action');
-    if (a === 'nav') { go('#/' + (el.getAttribute('data-page') === 'home' ? '' : el.getAttribute('data-page'))); window.scrollTo(0, 0); }
+    if (a === 'nav') { state.menuOpen = false; go('#/' + (el.getAttribute('data-page') === 'home' ? '' : el.getAttribute('data-page'))); window.scrollTo(0, 0); }
     else if (a === 'nav-hash') { if (el.classList.contains('disabled')) return; go(el.getAttribute('data-hash')); window.scrollTo(0, 0); }
+    else if (a === 'menu') { state.menuOpen = !state.menuOpen; render(); }
     else if (a === 'post') { go('#/blog/' + el.getAttribute('data-slug')); window.scrollTo(0, 0); }
     else if (a === 'project') { go('#/work/' + el.getAttribute('data-slug')); window.scrollTo(0, 0); }
     else if (a === 'lang') { state.lang = el.getAttribute('data-lang'); localStorage.setItem('lrs_lang', state.lang); document.documentElement.setAttribute('data-lang', state.lang); render(); }
