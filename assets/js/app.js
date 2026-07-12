@@ -52,28 +52,37 @@
     return '<span class="nav-link' + (active ? ' active' : '') + '" data-action="nav" data-page="' + page + '">' + esc(t(key)) + '</span>';
   }
 
+  function navItems(current) {
+    return navLink('studio', 'nav_studio', current) +
+      navLink('services', 'nav_services', current) +
+      navLink('blog', 'nav_blog', current) +
+      navLink('contact', 'nav_contact', current) +
+      '<div class="seg">' +
+        '<span class="' + (L() === 'ko' ? 'on' : '') + '" data-action="lang" data-lang="ko">KO</span>' +
+        '<span class="' + (L() === 'en' ? 'on' : '') + '" data-action="lang" data-lang="en">EN</span>' +
+      '</div>' +
+      '<button class="theme-btn" style="width:auto;padding:0 9px;font-size:11px;letter-spacing:1px;color:var(--muted)" data-action="font" title="font">' + fontLabel() + '</button>' +
+      '<button class="theme-btn" data-action="theme" title="theme">' + (state.theme === 'dark' ? '☾' : '☀') + '</button>';
+  }
+
+  /* nav-scrim/nav-drawer are rendered as siblings of .nav (not nested inside it) so
+     .nav's backdrop-filter can't hijack their fixed-position containing block. */
   function nav(current) {
+    var items = navItems(current);
     return '' +
-      '<div class="nav' + (state.menuOpen ? ' open' : '') + '"><div class="nav-inner">' +
+      '<div class="nav"><div class="nav-inner">' +
         '<div class="brand" data-action="nav" data-page="home">' +
           '<img class="pixel" src="assets/img/logo-raccoon-bust.png" alt="Lazy Raccoon">' +
           '<span>lazy_raccoon<span class="accent">_studio</span></span>' +
         '</div>' +
-        '<button class="nav-burger' + (state.menuOpen ? ' on' : '') + '" data-action="menu" aria-label="menu"><span></span><span></span><span></span></button>' +
-        '<div class="nav-scrim" data-action="menu"></div>' +
-        '<div class="nav-links">' +
-          navLink('studio', 'nav_studio', current) +
-          navLink('services', 'nav_services', current) +
-          navLink('blog', 'nav_blog', current) +
-          navLink('contact', 'nav_contact', current) +
-          '<div class="seg">' +
-            '<span class="' + (L() === 'ko' ? 'on' : '') + '" data-action="lang" data-lang="ko">KO</span>' +
-            '<span class="' + (L() === 'en' ? 'on' : '') + '" data-action="lang" data-lang="en">EN</span>' +
-          '</div>' +
-          '<button class="theme-btn" style="width:auto;padding:0 9px;font-size:11px;letter-spacing:1px;color:var(--muted)" data-action="font" title="font">' + fontLabel() + '</button>' +
-          '<button class="theme-btn" data-action="theme" title="theme">' + (state.theme === 'dark' ? '☾' : '☀') + '</button>' +
-        '</div>' +
-      '</div></div>';
+        '<div class="nav-links">' + items + '</div>' +
+        '<button class="nav-burger' + (state.menuOpen ? ' on' : '') + '" data-action="menu" aria-label="menu" aria-expanded="' + (state.menuOpen ? 'true' : 'false') + '"><span></span><span></span><span></span></button>' +
+      '</div></div>' +
+      '<div class="nav-scrim' + (state.menuOpen ? ' open' : '') + '" data-action="menu"></div>' +
+      '<div class="nav-drawer' + (state.menuOpen ? ' open' : '') + '" role="dialog" aria-modal="true" aria-label="menu">' +
+        '<button class="nav-drawer-close" data-action="menu" aria-label="close">✕</button>' +
+        items +
+      '</div>';
   }
 
   function promptLine(text) {
@@ -303,6 +312,24 @@
       nav(r.page) + '<main>' + body + '</main>' + mascotBand(r.page) + footer();
     if (r.page === 'post') loadPost(r.slug);
     if (r.page === 'project') loadProject(r.slug);
+    setMenuLock(state.menuOpen);
+  }
+
+  /* Locks background scroll while the mobile drawer is open. Uses
+     position:fixed on body (not overflow:hidden) because overflow:hidden on
+     html/body breaks position:sticky for .nav in some browsers. */
+  var lockScrollY = 0;
+  function setMenuLock(on) {
+    var locked = document.body.classList.contains('menu-lock');
+    if (on && !locked) {
+      lockScrollY = window.scrollY;
+      document.body.style.top = '-' + lockScrollY + 'px';
+      document.body.classList.add('menu-lock');
+    } else if (!on && locked) {
+      document.body.classList.remove('menu-lock');
+      document.body.style.top = '';
+      window.scrollTo(0, lockScrollY);
+    }
   }
 
   function pageContact() {
@@ -349,6 +376,10 @@
   });
 
   window.addEventListener('hashchange', render);
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && state.menuOpen) { state.menuOpen = false; render(); }
+  });
 
   /* ---------- boot ---------- */
   document.documentElement.setAttribute('data-theme', state.theme);
