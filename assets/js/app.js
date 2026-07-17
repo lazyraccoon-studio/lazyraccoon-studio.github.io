@@ -385,7 +385,8 @@
       if (!slot || turnstileWidgetId != null) return;
       if (window.turnstile) {
         turnstileWidgetId = window.turnstile.render('#turnstile-widget', {
-          sitekey: window.SITE_CONFIG.turnstileSiteKey
+          sitekey: window.SITE_CONFIG.turnstileSiteKey,
+          theme: state.theme === 'dark' ? 'dark' : 'light'
         });
         return;
       }
@@ -411,11 +412,21 @@
     var message = form.message.value.trim();
     var honeypot = form.website ? form.website.value.trim() : '';
     var token = window.turnstile ? window.turnstile.getResponse(turnstileWidgetId) : '';
+    var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    var MESSAGE_MIN = 10;
 
     if (honeypot) return;
 
     if (!name || !email || !message) {
-      setContactStatus(t('form_error_validation'), 'err');
+      setContactStatus(t('form_error_required'), 'err');
+      return;
+    }
+    if (!emailOk) {
+      setContactStatus(t('form_error_email'), 'err');
+      return;
+    }
+    if (message.length < MESSAGE_MIN) {
+      setContactStatus(t('form_error_message_min'), 'err');
       return;
     }
     if (!token) {
@@ -454,9 +465,15 @@
           return;
         }
         var code = out.data.code;
-        if (out.res.status === 429 || code === 'MONTHLY_LIMIT') setContactStatus(t('form_error_limit'), 'err');
+        if (code === 'RATE_LIMIT_HOUR') setContactStatus(t('form_error_rate_hour'), 'err');
+        else if (code === 'RATE_LIMIT_DAY') setContactStatus(t('form_error_rate_day'), 'err');
+        else if (code === 'MONTHLY_LIMIT') setContactStatus(t('form_error_limit'), 'err');
+        else if (code === 'MESSAGE_TOO_SHORT') setContactStatus(t('form_error_message_min'), 'err');
         else if (code === 'CAPTCHA_REQUIRED' || code === 'CAPTCHA_FAILED') setContactStatus(t('form_error_captcha'), 'err');
-        else if (code === 'VALIDATION') setContactStatus(t('form_error_validation'), 'err');
+        else if (code === 'VALIDATION') {
+          if (out.data.field === 'email') setContactStatus(t('form_error_email'), 'err');
+          else setContactStatus(t('form_error_validation'), 'err');
+        } else if (out.res.status === 429) setContactStatus(t('form_error_rate_hour'), 'err');
         else setContactStatus(t('form_error'), 'err');
         if (window.turnstile && turnstileWidgetId != null) window.turnstile.reset(turnstileWidgetId);
       })
@@ -478,14 +495,14 @@
       '<div class="contact-grid">' +
         '<div class="card"><form class="form" id="contact-form" novalidate>' +
           '<div class="hp-field" aria-hidden="true"><label>website</label><input type="text" name="website" tabindex="-1" autocomplete="off"></div>' +
-          '<div><label for="contact-name">' + esc(t('form_name')) + '</label><input id="contact-name" name="name" type="text" required maxlength="100" autocomplete="name"></div>' +
-          '<div><label for="contact-email">' + esc(t('form_email')) + '</label><input id="contact-email" name="email" type="email" required maxlength="254" autocomplete="email"></div>' +
-          '<div><label for="contact-message">' + esc(t('form_msg')) + '</label><textarea id="contact-message" name="message" rows="5" required minlength="10" maxlength="5000"></textarea></div>' +
-          '<div id="contact-status" class="form-status" role="status" aria-live="polite"></div>' +
+          '<div class="form-field"><label for="contact-name">' + esc(t('form_name')) + '</label><input id="contact-name" name="name" type="text" required maxlength="100" autocomplete="name"></div>' +
+          '<div class="form-field"><label for="contact-email">' + esc(t('form_email')) + '</label><input id="contact-email" name="email" type="email" required maxlength="254" autocomplete="email"></div>' +
+          '<div class="form-field form-field-message"><label for="contact-message">' + esc(t('form_msg')) + '</label><textarea id="contact-message" name="message" rows="6" required minlength="10" maxlength="5000"></textarea></div>' +
           '<div class="form-foot">' +
-            '<div class="captcha-col"><label>' + esc(t('form_captcha')) + '</label><div class="captcha-slot" id="turnstile-widget"></div></div>' +
-            '<button class="btn" type="submit">' + esc(t('form_send')) + '</button>' +
+            '<div class="captcha-col"><div class="captcha-slot" id="turnstile-widget" aria-label="' + esc(t('form_captcha')) + '"></div></div>' +
+            '<button class="btn form-submit" type="submit">' + esc(t('form_send')) + '</button>' +
           '</div>' +
+          '<div id="contact-status" class="form-status" role="status" aria-live="polite"></div>' +
         '</form></div>' +
         '<div class="info-col">' +
           '<div class="info-card biz">' +

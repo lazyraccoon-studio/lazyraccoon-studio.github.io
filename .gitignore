@@ -7,6 +7,6 @@
 supabase/.env
 supabase/.env.local
 assets/js/config.local.js
-docs
 scripts
 supabase
+docs
