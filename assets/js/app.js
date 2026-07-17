@@ -27,6 +27,8 @@
   var mdCache = {};         // slug+lang -> html (blog)
   var projCache = {};       // slug+lang -> html (projects)
   var BLOG_PAGE_SIZE = 8;
+  var turnstileWidgetId = null;
+  var contactSending = false;
 
   function L() { return state.lang; }
   function t(k) { return (window.I18N[state.lang] && window.I18N[state.lang][k]) || k; }
@@ -313,6 +315,8 @@
       nav(r.page) + '<main>' + body + '</main>' + mascotBand(r.page) + footer() + lightbox();
     if (r.page === 'post') loadPost(r.slug);
     if (r.page === 'project') loadProject(r.slug);
+    if (r.page === 'contact') initContactPage();
+    else destroyTurnstile();
     setScrollLock(state.menuOpen || !!state.lightboxSrc);
   }
 
@@ -342,18 +346,144 @@
     }
   }
 
+  function siteConfigReady() {
+    var c = window.SITE_CONFIG;
+    return c && c.contactFunctionUrl && c.supabaseAnonKey &&
+      c.turnstileSiteKey &&
+      c.supabaseAnonKey.indexOf('PASTE_') !== 0 &&
+      c.turnstileSiteKey.indexOf('PASTE_') !== 0;
+  }
+
+  function destroyTurnstile() {
+    if (turnstileWidgetId != null && window.turnstile) {
+      try { window.turnstile.remove(turnstileWidgetId); } catch (e) { /* noop */ }
+      turnstileWidgetId = null;
+    }
+  }
+
+  function setContactStatus(msg, kind) {
+    var el = document.getElementById('contact-status');
+    if (!el) return;
+    el.textContent = msg || '';
+    el.className = 'form-status' + (kind ? ' ' + kind : '');
+  }
+
+  function initContactPage() {
+    destroyTurnstile();
+    var form = document.getElementById('contact-form');
+    if (!form) return;
+
+    setContactStatus('', '');
+
+    if (!siteConfigReady()) {
+      setContactStatus(t('form_error_config'), 'err');
+      return;
+    }
+
+    function renderTurnstile(attempts) {
+      var slot = document.getElementById('turnstile-widget');
+      if (!slot || turnstileWidgetId != null) return;
+      if (window.turnstile) {
+        turnstileWidgetId = window.turnstile.render('#turnstile-widget', {
+          sitekey: window.SITE_CONFIG.turnstileSiteKey
+        });
+        return;
+      }
+      if (attempts > 0) setTimeout(function () { renderTurnstile(attempts - 1); }, 100);
+    }
+    renderTurnstile(50);
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (contactSending) return;
+      handleContactSubmit(form);
+    });
+  }
+
+  function handleContactSubmit(form) {
+    if (!siteConfigReady()) {
+      setContactStatus(t('form_error_config'), 'err');
+      return;
+    }
+
+    var name = form.name.value.trim();
+    var email = form.email.value.trim();
+    var message = form.message.value.trim();
+    var honeypot = form.website ? form.website.value.trim() : '';
+    var token = window.turnstile ? window.turnstile.getResponse(turnstileWidgetId) : '';
+
+    if (honeypot) return;
+
+    if (!name || !email || !message) {
+      setContactStatus(t('form_error_validation'), 'err');
+      return;
+    }
+    if (!token) {
+      setContactStatus(t('form_error_captcha'), 'err');
+      return;
+    }
+
+    contactSending = true;
+    setContactStatus(t('form_sending'), '');
+    var btn = form.querySelector('button[type="submit"]');
+    if (btn) btn.disabled = true;
+
+    fetch(window.SITE_CONFIG.contactFunctionUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': window.SITE_CONFIG.supabaseAnonKey
+      },
+      body: JSON.stringify({
+        name: name,
+        email: email,
+        message: message,
+        turnstileToken: token
+      })
+    })
+      .then(function (res) {
+        return res.json().catch(function () { return {}; }).then(function (data) {
+          return { res: res, data: data };
+        });
+      })
+      .then(function (out) {
+        if (out.res.ok && out.data.ok) {
+          setContactStatus(t('form_success'), 'ok');
+          form.reset();
+          if (window.turnstile && turnstileWidgetId != null) window.turnstile.reset(turnstileWidgetId);
+          return;
+        }
+        var code = out.data.code;
+        if (out.res.status === 429 || code === 'MONTHLY_LIMIT') setContactStatus(t('form_error_limit'), 'err');
+        else if (code === 'CAPTCHA_REQUIRED' || code === 'CAPTCHA_FAILED') setContactStatus(t('form_error_captcha'), 'err');
+        else if (code === 'VALIDATION') setContactStatus(t('form_error_validation'), 'err');
+        else setContactStatus(t('form_error'), 'err');
+        if (window.turnstile && turnstileWidgetId != null) window.turnstile.reset(turnstileWidgetId);
+      })
+      .catch(function () {
+        setContactStatus(t('form_error_network'), 'err');
+        if (window.turnstile && turnstileWidgetId != null) window.turnstile.reset(turnstileWidgetId);
+      })
+      .finally(function () {
+        contactSending = false;
+        if (btn) btn.disabled = false;
+      });
+  }
+
   function pageContact() {
     return '<div class="page"><div class="container" style="padding-top:56px">' +
       '<div class="cmd">' + promptLine(t('contact_cmd')) + '</div>' +
       '<h1 class="page-h1">' + esc(t('contact_h')) + '</h1>' +
       '<p class="page-sub" style="max-width:640px">' + esc(t('contact_sub')) + '</p>' +
       '<div class="contact-grid">' +
-        '<div class="card"><form class="form" data-action="noop" onsubmit="return false">' +
-          '<div><label>' + esc(t('form_name')) + '</label><input type="text"></div>' +
-          '<div><label>' + esc(t('form_email')) + '</label><input type="email"></div>' +
-          '<div><label>' + esc(t('form_msg')) + '</label><textarea rows="5"></textarea></div>' +
+        '<div class="card"><form class="form" id="contact-form" novalidate>' +
+          '<div class="hp-field" aria-hidden="true"><label>website</label><input type="text" name="website" tabindex="-1" autocomplete="off"></div>' +
+          '<div><label for="contact-name">' + esc(t('form_name')) + '</label><input id="contact-name" name="name" type="text" required maxlength="100" autocomplete="name"></div>' +
+          '<div><label for="contact-email">' + esc(t('form_email')) + '</label><input id="contact-email" name="email" type="email" required maxlength="254" autocomplete="email"></div>' +
+          '<div><label for="contact-message">' + esc(t('form_msg')) + '</label><textarea id="contact-message" name="message" rows="5" required minlength="10" maxlength="5000"></textarea></div>' +
+          '<div id="contact-status" class="form-status" role="status" aria-live="polite"></div>' +
           '<div class="form-foot">' +
-            '<div class="captcha-col"><label>' + esc(t('form_captcha')) + '</label><div class="captcha-slot" data-captcha>' + esc(t('captcha_hint')) + '</div></div>' +
+            '<div class="captcha-col"><label>' + esc(t('form_captcha')) + '</label><div class="captcha-slot" id="turnstile-widget"></div></div>' +
             '<button class="btn" type="submit">' + esc(t('form_send')) + '</button>' +
           '</div>' +
         '</form></div>' +

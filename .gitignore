@@ -1,3 +1,12 @@
 # Claude Code / gstack local state (sessions, tokens, logs, QA artifacts)
 .claude/
 .gstack/
+.docs/
+
+# Contact form — local secrets & overrides (never commit)
+supabase/.env
+supabase/.env.local
+assets/js/config.local.js
+docs
+scripts
+supabase

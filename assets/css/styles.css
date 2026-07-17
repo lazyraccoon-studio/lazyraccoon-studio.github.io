@@ -233,8 +233,14 @@ input, textarea, button { font-family: inherit; }
 .form input, .form textarea { width: 100%; background: var(--field); border: 1px solid var(--border2); border-radius: 8px; padding: 12px 14px; font-size: 14px; color: var(--ink); outline: none; }
 .form textarea { resize: vertical; }
 .form-foot .btn { align-self: flex-end; min-height: 78px; }
-.captcha-slot { display: flex; align-items: center; justify-content: center; text-align: center; min-height: 78px; padding: 14px 16px; border: 1px dashed var(--border2); border-radius: 8px; background: var(--field); color: var(--muted); font-size: 12px; line-height: 1.6; }
+.captcha-slot { display: flex; align-items: center; justify-content: flex-start; min-height: 78px; padding: 8px 0; }
+.captcha-slot:empty { align-items: center; justify-content: center; padding: 14px 16px; border: 1px dashed var(--border2); border-radius: 8px; background: var(--field); color: var(--muted); font-size: 12px; }
+.form-status { font-size: 13px; line-height: 1.6; min-height: 1.6em; }
+.form-status.ok { color: var(--accent); }
+.form-status.err { color: #e85d5d; }
 .form button { align-self: flex-start; }
+.form button:disabled { opacity: .55; cursor: not-allowed; }
+.hp-field { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none; }
 .info-col { display: flex; flex-direction: column; gap: 16px; }
 .info-col .info-card { flex: 1; }
 .biz .info-card, .info-card.biz { display: flex; flex-direction: column; overflow: hidden; }
