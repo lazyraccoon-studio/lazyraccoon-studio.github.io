@@ -113,10 +113,25 @@
       '</div></div>';
   }
 
+  function footItem(label, valueHtml) {
+    return '<div class="fi"><dt>' + esc(label) + '</dt><dd>' + valueHtml + '</dd></div>';
+  }
+
   function footer() {
     return '' +
       '<div class="footer"><div class="footer-inner">' +
-        '<div class="footer-brand"><span>' + esc(t('rights')) + '</span></div>' +
+        '<div class="footer-info">' +
+          '<div class="footer-label">// lazyraccoon studio</div>' +
+          '<dl class="footer-biz">' +
+            footItem(t('foot_company'), esc(t('foot_company_v'))) +
+            footItem(t('foot_ceo'), esc(t('foot_ceo_v'))) +
+            footItem(t('biz_no'), esc(window.CONTACT.bizNo)) +
+            '<div class="fi-br" aria-hidden="true"></div>' +
+            footItem(t('biz_addr'), esc(t('addr_v'))) +
+            footItem(t('foot_email'), '<a href="mailto:' + esc(window.CONTACT.bizEmail) + '">' + esc(window.CONTACT.bizEmail) + '</a>') +
+          '</dl>' +
+          '<div class="footer-copy">' + esc(t('rights')) + '</div>' +
+        '</div>' +
         '<div class="footer-built">' +
           '<div class="foot-mascot" title="typing raccoon">' +
             '<div class="rc-glyphs"><span>{ }</span><span>&lt;/&gt;</span><span>~$</span></div>' +

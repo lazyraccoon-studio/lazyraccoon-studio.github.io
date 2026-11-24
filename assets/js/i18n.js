@@ -72,6 +72,9 @@ window.I18N = {
     foot_cta_h: '오늘 밤, 같이 만들어 볼까요?',
     foot_cta_p: '프로젝트 의뢰부터 가벼운 인사까지 — 게으른 너구리는 밤에도 깨어 있어요.',
     cta_btn: '문의하기 →',
+    foot_company: '상호', foot_ceo: '대표', foot_email: '이메일',
+    foot_company_v: '게으른 너구리 스튜디오 (lazyraccoon studio)',
+    foot_ceo_v: '이종석',
     rights: '© 2026 게으른 너구리 스튜디오. All rights reserved.'
   },
   en: {
@@ -142,6 +145,9 @@ window.I18N = {
     foot_cta_h: 'Shall we build something tonight?',
     foot_cta_p: 'From project inquiries to a simple hello — the lazy raccoon stays up at night.',
     cta_btn: 'Get in touch →',
+    foot_company: 'Company', foot_ceo: 'CEO', foot_email: 'Email',
+    foot_company_v: 'lazyraccoon studio (게으른 너구리 스튜디오)',
+    foot_ceo_v: 'JongSeok Lee',
     rights: '© 2026 Lazy Raccoon Studio. All rights reserved.'
   }
 };
@@ -150,5 +156,6 @@ window.I18N = {
 window.CONTACT = {
   email: 'hello@lazyraccoon.studio',
   github: 'github.com/lazyraccoon-studio',
-  bizNo: '306-22-28698'
+  bizNo: '306-22-28698',
+  bizEmail: 'apps@lazyraccoon.studio'
 };

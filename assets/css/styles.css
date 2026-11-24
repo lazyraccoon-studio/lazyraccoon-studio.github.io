@@ -376,10 +376,19 @@ input, textarea, button { font-family: inherit; }
 .mascot-copy .btn { align-self: flex-start; margin-top: 10px; }
 
 .footer { border-top: 1px solid var(--border); margin-top: 88px; }
-.footer-inner { max-width: var(--maxw); margin: 0 auto; padding: 36px 28px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
-.footer-brand { display: flex; align-items: center; gap: 11px; }
-.footer-brand img { height: 34px; width: auto; }
-.footer-brand span { font-size: 13px; color: var(--muted); }
+.footer-inner { max-width: var(--maxw); margin: 0 auto; padding: 40px 28px 44px; display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+.footer-info { flex: 1 1 560px; min-width: 0; }
+.footer-label { font-size: 12px; color: var(--accent); letter-spacing: 2px; margin-bottom: 16px; }
+.footer-biz { display: flex; flex-wrap: wrap; gap: 8px 0; font-size: 12.5px; line-height: 1.6; }
+.footer-biz .fi { display: flex; gap: 8px; align-items: baseline; }
+.footer-biz .fi + .fi::before { content: '|'; color: var(--border2); margin: 0 14px; }
+.footer-biz .fi-br { flex-basis: 100%; height: 0; }
+.footer-biz .fi-br + .fi::before { display: none; }
+.footer-biz dt { color: var(--muted); white-space: nowrap; }
+.footer-biz dd { color: var(--ink-soft); }
+.footer-biz dd a { color: var(--accent); text-decoration: none; }
+.footer-biz dd a:hover { text-decoration: underline; }
+.footer-copy { margin-top: 18px; padding-top: 14px; border-top: 1px dashed var(--border2); font-size: 12px; color: var(--muted); }
 .footer-built { font-size: 12px; color: var(--muted); }
 
 /* ---------- footer typing raccoon ---------- */
@@ -567,6 +576,10 @@ input, textarea, button { font-family: inherit; }
   .mascot-copy h2 { font-size: 23px; }
   .footer { margin-top: 64px; }
   .footer-inner { padding: 28px 18px; }
+  .footer-biz { flex-direction: column; gap: 6px; }
+  .footer-biz .fi + .fi::before, .footer-biz .fi-br { display: none; }
+  .footer-biz dt { min-width: 104px; }
+  .footer-biz dd { word-break: keep-all; }
   .foot-mascot { display: none; }
 
   /* post */
