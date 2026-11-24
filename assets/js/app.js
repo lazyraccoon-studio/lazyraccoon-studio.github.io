@@ -128,7 +128,7 @@
             footItem(t('biz_no'), esc(window.CONTACT.bizNo)) +
             '<div class="fi-br" aria-hidden="true"></div>' +
             footItem(t('biz_addr'), esc(t('addr_v'))) +
-            footItem(t('foot_email'), '<a href="mailto:' + esc(window.CONTACT.bizEmail) + '">' + esc(window.CONTACT.bizEmail) + '</a>') +
+            footItem(t('foot_email'), '<a href="mailto:' + esc(window.CONTACT.email) + '">' + esc(window.CONTACT.email) + '</a>') +
           '</dl>' +
           '<div class="footer-copy">' + esc(t('rights')) + '</div>' +
         '</div>' +

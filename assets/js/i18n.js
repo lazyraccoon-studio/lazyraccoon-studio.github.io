@@ -154,8 +154,7 @@ window.I18N = {
 
 /* Contact links + business number (not language-specific) */
 window.CONTACT = {
-  email: 'hello@lazyraccoon.studio',
+  email: 'apps@lazyraccoon.studio',
   github: 'github.com/lazyraccoon-studio',
-  bizNo: '306-22-28698',
-  bizEmail: 'apps@lazyraccoon.studio'
+  bizNo: '306-22-28698'
 };
