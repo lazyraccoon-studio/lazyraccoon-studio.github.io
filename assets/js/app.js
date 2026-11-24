@@ -539,8 +539,10 @@
           '<div class="info-card biz">' +
             '<div class="section-label" style="margin-bottom:18px">' + esc(t('biz_label')) + '</div>' +
             '<div class="info-row"><div class="k">' + esc(t('biz_company')) + '</div><div class="v">' + esc(t('biz_company_v')) + '</div></div>' +
+            '<div class="info-row"><div class="k">' + esc(t('foot_ceo')) + '</div><div class="v">' + esc(t('foot_ceo_v')) + '</div></div>' +
             '<div class="info-row"><div class="k">' + esc(t('biz_no')) + '</div><div class="v">' + esc(window.CONTACT.bizNo) + '</div></div>' +
             '<div class="info-row"><div class="k">' + esc(t('biz_addr')) + '</div><div class="v">' + esc(t('addr_v')) + '</div></div>' +
+            '<div class="info-row"><div class="k">' + esc(t('foot_email')) + '</div><a class="v" href="mailto:' + esc(window.CONTACT.email) + '">' + esc(window.CONTACT.email) + '</a></div>' +
             '<div class="biz-art"><img class="pixel" src="assets/img/raccoon-sleep.png" alt=""></div>' +
           '</div>' +
         '</div>' +
