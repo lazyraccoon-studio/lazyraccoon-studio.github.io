@@ -147,7 +147,7 @@ window.I18N = {
     cta_btn: 'Get in touch →',
     foot_company: 'Company', foot_ceo: 'CEO', foot_email: 'Email',
     foot_company_v: 'lazyraccoon studio (게으른 너구리 스튜디오)',
-    foot_ceo_v: 'JongSeok Lee',
+    foot_ceo_v: 'LEE JONG SEOK',
     rights: '© 2026 Lazy Raccoon Studio. All rights reserved.'
   }
 };
